@@ -1,0 +1,41 @@
+<apex:page controller="TableController" docType="html-5.0">
+    <apex:pageBlock title="My Content" id="tablePageBlock">
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:form >
+            <apex:selectList value="{!selectedConsultantId}" multiselect="false" size="1">
+                <apex:actionSupport event="onchange" action="{!initTableData}" reRender="tablePageBlock"/>
+                <apex:selectOptions value="{!consultants}"/>
+            </apex:selectList>
+            <apex:input value="{! selectedDate }" html-placeholder="Start Date" type="date">
+                <apex:actionSupport event="onchange" action="{!initTableData}" reRender="tableData"/>
+            </apex:input>
+
+            <apex:pageBlockTable value="{!tableRows}" var="tableRow" id="tableData">
+                <apex:column headerValue="Project">
+                	<apex:inputField value="{!tableRow.Task.Project__c}"/>
+                </apex:column>
+                <apex:column headerValue="Task">
+                	<apex:inputField value="{!tableRow.Task.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Non-billable">
+                	<apex:inputField value="{!tableRow.BillingRule.Non_billable__c}"/>
+                </apex:column>
+                
+                <apex:repeat value="{!WeekDayNums}" var="num">
+                    <apex:column headerValue="{!weekDayNames[num]}">
+                        <apex:inputField value="{!tableRow.TimeSpendsCol[num].Time_spend__c}"/>
+                    </apex:column>
+                </apex:repeat>
+
+                <apex:column headerValue="Actions">
+                    <apex:commandButton value="Del" action="{!deleteTask}"  reRender="tableData" >
+                        <apex:param name="taskId" value="{!tableRow.RowNumber}" assignTo="{!selectedRow}"/>
+                    </apex:commandButton>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:commandButton value="Add" action="{!addRow}" reRender="tableData" />
+            <apex:commandButton value="Save changes" reRender="tablePageBlock" action="{!saveChanges}"/>
+        </apex:form>
+    </apex:pageBlock>
+
+</apex:page>
